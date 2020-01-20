@@ -8,8 +8,8 @@ I got it completed when being in no mood for working on algorithm learning aroun
 
 Simple, yes, but available. It's uploaded mainly because it will look better if there's at least
 
-one repository in your main page , isn't it.
+one repository in your main page , right?
 
-One of the drawbacks is to have a poor random algorithm for the robot. Another is that some codes 
+One of the drawbacks is to have a poor random algorithm of the robot. Another is that some codes 
 
 are useless and surplus.
