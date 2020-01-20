@@ -1,8 +1,18 @@
 # tic-tac-toe-simple-game
 A rather simple C++ game so there's no need for a license.
 
+# includes
+```
+#include <iostream>
+#include <cstdio>
+#include <algorithm>
+#include <cstring>
+#include <cstdlib>
+#include <ctime>
+```
+
 # Descriptions
-Contains only a .cpp file. Available after being complied in Windows environment 
+Contains only a .cpp file. Available after being complied. 
 
 I got it completed when being in no mood for working on algorithm learning around a year ago.
 
