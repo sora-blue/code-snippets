@@ -1,9 +1,9 @@
-#include <iostream>
-#include <cstdio>
 #include <algorithm>
+#include <cstdio>
 #include <cstring>
 #include <cstdlib>
 #include <ctime>
+#include <iostream>
 // robot map_inside[x][y]=1
 // person map_inside[x][y]=2
 using std::cin;
@@ -18,7 +18,6 @@ int d[][2]= {
 int check_empty     ();
 int check_win       ();
 bool check_rules    (int,int);
-inline
 bool check_able     (int,int,int);
 bool robot_random_chess   ();
 bool robot_strategy_jugde (int);
