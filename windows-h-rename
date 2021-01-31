@@ -1,0 +1,30 @@
+#include <iostream> 
+#include <sstream>
+#include <windows.h>
+WIN32_FIND_DATAA a;
+const std::string prefix = "test";//prefix 
+std::string s("C:\\*.*");//file path
+typedef HANDLE handle;
+int main(){
+	handle h = FindFirstFile(s.c_str(),&a);
+	int count = 0;
+	do{
+		if (strcmp(a.cFileName, ".") == 0 || strcmp(a.cFileName, "..") == 0) //exclude directories 
+            continue;
+//        if(a.cFileName[strlen(a.cFileName) - 1] != 't')
+//			continue;
+		if(a.cFileName[0] == prefix[0])//if not have renamed before
+			continue;
+		std::stringstream ss;
+		std::string s;
+		std::cout << a.cFileName << std::endl;
+		ss << prefix << ++count;
+		if(a.cFileName[strlen(a.cFileName) - 2] == 'p') // jpg or png (given only these two types of pics)
+			ss << ".jpg";
+		else
+			ss << ".png";
+		ss >> s;
+		rename(a.cFileName, s.c_str());
+	}while(FindNextFile(h,&a));
+	return 0;
+}
