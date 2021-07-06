@@ -1,0 +1,172 @@
+//next:hash duplicated files : completed
+/*
+Read image-uri from clipboard and convert it to .png images
+through "certutil" provided under windows OS.
+ 
+Recipe code style. Totally at a mess and can only applied 
+in windows system.
+
+*/
+#include <bits/stdc++.h>
+#include <set>
+#include <thread>
+#include <windows.h>
+HGLOBAL hGlobal;
+PCHAR pCopied, pGlobal;
+std::string savepath = "<savepath>";
+std::string prefix = "image";
+std::string suffix;
+int getAvaIndex()
+{
+	int index = 0;
+	std::string filepath = savepath + prefix + std::to_string(index) + "." + suffix;
+	WIN32_FIND_DATAA file;
+	HANDLE han = FindFirstFile(filepath.c_str(), &file);
+	while(han != (HANDLE)-1)
+	{
+		filepath = savepath + prefix + std::to_string(++index) + "." + suffix;
+		han = FindFirstFile(filepath.c_str(), &file);
+	}
+	return index;
+}
+std::string getFromCb()
+{
+	//get the handle
+	OpenClipboard(GetDesktopWindow());
+	hGlobal = GetClipboardData(CF_TEXT);
+	if(!hGlobal)
+	{
+		throw std::runtime_error("Failed to read clipboard.");
+		return "ERROR";
+	}
+	//allocate memory for the char array
+	//lock global clipboard while reading
+	//actually c-programming
+	//PCHAR stands for pointer of char
+	pCopied = new char[GlobalSize(hGlobal) + 10];
+	pGlobal = (PCHAR)GlobalLock(hGlobal);
+	strcpy(pCopied, pGlobal);
+	GlobalUnlock(hGlobal);
+	CloseClipboard();
+	std::string data(pCopied);
+	delete [] pCopied;
+	return data;
+}
+std::pair<bool, std::string> checkImageUri(const std::string& data)
+{
+	if(data.substr(0,11) != "data:image/")
+		return std::make_pair(false,"ERROR-not-a-image-data-url");
+	if(data.substr(14,8) != ";base64,")
+		return std::make_pair(false,"ERROR-not-base64");
+	return std::make_pair(true, data.substr(11,3));
+}
+inline std::string& truncImageUri(std::string& data){
+	data.erase(0,22);
+	return data;
+}
+void clearTheSame()
+{
+	int index = 0, counter = 0;
+	std::string tmpfile = "~tmp2.txt";
+	std::string sub_suffix = std::string(" >> ") + tmpfile ;
+	std::string sub_prefix = "certutil -hashfile " ;
+	
+	std::ifstream fin;
+	WIN32_FIND_DATAA file;
+	HANDLE han = FindFirstFile(std::string(savepath + "*.*").c_str(), &file);
+	std::set<std::string> data; // wrong: it should have been defined in the outer space
+	do
+	{
+		if(strcmp(file.cFileName, ".") == 0|| strcmp(file.cFileName, "..") == 0)
+			continue;
+		//1. make up a legal command
+		std::string com_hash = sub_prefix + '"' +  savepath + file.cFileName  + '"' + sub_suffix ;
+		std::string tmp; 
+		
+		//2. execute it and save the result to <tmpfile>
+		//3. read sha1 from <tmpfile>
+		system(com_hash.c_str());
+		fin.open(tmpfile);
+		getline(fin, tmp);
+		getline(fin, tmp);
+		{ check:
+			for(auto ite = tmp.begin() ; ite != tmp.end(); ++ite)
+				if(!isalpha(*ite) && !isdigit(*ite)) throw std::runtime_error("sth-wrong-happened-with-hashfile-command");
+		}
+		std::cout << tmp << std::endl;
+		fin.close();
+		//4. check it with set
+		auto ite = data.find(tmp);
+		if(ite != data.end())
+		{
+			std::string com_del = std::string("del ") + '"' +  savepath + file.cFileName  + '"';
+			++counter;
+			std::cout << com_del << std::endl;
+			system(com_del.c_str());
+		}
+		data.insert(tmp);
+		//5. del <tmpfile>
+		system(std::string(std::string("del ") + tmpfile).c_str());
+	}while(FindNextFile(han, &file));
+	
+	std::cout << "------------------------------- \n";
+	std::cout << "Tried to delete " << counter << " duplicated file(s) .\n";
+	std::cout << "------------------------------- \n";
+}
+void generateCom()
+{
+	std::string data = getFromCb();
+	std::string tmpfilename = "~tmp.txt";
+	std::vector<std::string> com
+	{
+		savepath.substr(0,2),
+		std::string("cd ") + savepath,
+		std::string("Certutil -decode ") + "\"" + savepath +  tmpfilename + "\" "
+		//,std::string("attrib +h +s ") +  "\"" + savepath +  tmpfilename + "\" "
+		//not just hide file, but actually make it untouchable
+		,std::string("del ")+ "\"" + savepath +  tmpfilename + "\" "
+	};
+	auto afc = checkImageUri(data);
+	std::ofstream fout(savepath + tmpfilename);
+	int index = -1;
+	if(!afc.first)
+	{
+		throw std::runtime_error("Invalid image-data-uri");
+	}
+	suffix = afc.second;
+	index = getAvaIndex();
+	data = truncImageUri(data);
+	fout << data;
+	fout.close();
+	com[2] = com[2] + "\"" + savepath + prefix + std::to_string(index) + "." + suffix + "\" ";
+	for(long long unsigned int i = 0 ; i != com.size() ; ++i)
+	{
+		std::cout << com[i] << std::endl;
+		system(com[i].c_str());
+	}
+	clearTheSame();
+	std::cout << "have a see?(y/n)";char ch;
+	
+	//auto close after 1.2 seconds
+	std::thread th([](){
+		Sleep(1200);
+		exit(0);
+	});
+	th.detach(); 
+	/*
+		join() : main thread needs to wait
+		detach() : main thread and sub thread run simultaneously 
+	*/ 
+	std::cin >> ch;
+	if(ch == 'Y' || ch == 'y')
+	{
+		system(std::string(std::string("explorer ") + savepath).c_str());
+	}
+}
+int main()//throws IOException
+{
+	//data:image/png;base64,
+	generateCom(); //real main func :)
+	return 0;
+}
+//Some codes are from:https://blog.csdn.net/ZhuMingYou3699/article/details/57455749
