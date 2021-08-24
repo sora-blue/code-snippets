@@ -60,11 +60,11 @@ def start_test():
                 print("Wrong!\n %s:\n Bits: %s\n Description: %s\n" % (register, register_bit, register_description))
             print("------------------------------------------------")
 
-        respond = input("You've completed all registers!\nWanna play again?(y/n)\n")
-        if respond.find(sub="y") == -1 or respond.find(sub="Y") == -1:
-            print("See u again.")
-            break
-        register_vis = [False for i in range(register_num)]
+            respond = input("You've completed all registers!\nWanna play again?(y/n)\n")
+            if respond.find(sub="y") == -1 or respond.find(sub="Y") == -1:
+                print("See u again.")
+                break
+            register_vis = [False for i in range(register_num)]
 
 
 if __name__ == '__main__':
