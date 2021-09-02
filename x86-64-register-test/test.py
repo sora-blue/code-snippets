@@ -4,6 +4,8 @@ register_data = dict()
 register_num = 0
 register_vis = []
 
+# TO-DO: sum score for each process, visualize how many exercises have been done
+
 
 def read_data(filepath):
     global register_num, register_data, register_vis
@@ -11,6 +13,8 @@ def read_data(filepath):
     for line in f.readlines():
         line = line.strip()
         if len(line) == 0:
+            continue
+        if line[0:2] == "//":
             continue
         line = line.split('-')
         key = line.pop(0)
@@ -52,7 +56,9 @@ def start_test():
             if inputList == "exit":
                 return
             bit, description = inputList.split(' ')
-            description = A_des if description.find("A") != -1 else B_des
+            description = A_des if description.find("A") != -1 or description.find("a") != -1 else B_des
+            if len(description.strip()) == 0:
+                description = ""
             if bit == register_bit and description == register_description:
                 print("Correct!\n")
                 register_vis[random_index] = True
@@ -61,7 +67,7 @@ def start_test():
             print("------------------------------------------------")
 
         respond = input("You've completed all registers!\nWanna play again?(y/n)\n")
-        if respond.find("y") == -1 or respond.find("Y") == -1:
+        if respond.find("y") == -1 and respond.find("Y") == -1:
             print("See u again.")
             break
         register_vis = [False for i in range(register_num)]
