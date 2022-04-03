@@ -52,7 +52,7 @@ def start_test():
                 A_des = another_register_description
                 B_des = register_description
             print("A: %s\nB: %s" % (A_des, B_des))
-            inputList = input("你的答案: ")
+            inputList = input("Your answer: ")
             if inputList == "exit":
                 return
             bit, description = inputList.split(' ')
