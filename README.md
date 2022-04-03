@@ -1,1 +1,1 @@
-cpp-based(or c-based) lite tools
+amateur-level lite tools
