@@ -1,0 +1,77 @@
+﻿{
+    "ver":"5.0",
+    "tag":"hipsuser",
+    "data":[
+        {
+            "id":4,
+            "power":1,
+            "name":"Brave Protection",
+            "procname":"*",
+            "treatment":1,
+            "policies":[
+                {
+                    "montype":1,
+                    "action_type":2,
+                    "res_path":"?:\\\\Users\\\\*\\\\AppData\\\\Local\\\\BraveSoftware\\\\Brave-Browser\\\\User Data\\\\Default\\\\*"
+                }
+            ]
+        },
+        {
+            "id":1,
+            "power":1,
+            "name":"Chromium-Based Protection",
+            "procname":"*",
+            "treatment":1,
+            "policies":[
+                {
+                    "montype":1,
+                    "action_type":6,
+                    "res_path":"?:\\Users\\*\\AppData\\Local\\*\\User Data\\Default\\*"
+                }
+            ]
+        },
+        {
+            "id":2,
+            "power":1,
+            "name":"Firefox Protection",
+            "procname":"*",
+            "treatment":1,
+            "policies":[
+                {
+                    "montype":1,
+                    "action_type":6,
+                    "res_path":"?:\\Users\\*\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\*"
+                }
+            ]
+        },
+        {
+            "id":3,
+            "power":1,
+            "name":"IE Protection",
+            "procname":"*",
+            "treatment":1,
+            "policies":[
+                {
+                    "montype":1,
+                    "action_type":6,
+                    "res_path":"?:\\Users\\*\\AppData\\Local\\Packages\\Microsoft.MicrosoftEdge_*\\AC\\MicrosoftEdge\\User\\Default\\*"
+                },
+                {
+                    "montype":1,
+                    "action_type":6,
+                    "res_path":"?:\\Users\\*\\AppData\\Local\\Microsoft\\Windows\\WebCache\\*"
+                },
+                {
+                    "montype":1,
+                    "action_type":6,
+                    "res_path":"?:\\Users\\*\\AppData\\Local\\Microsoft\\Windows\\History\\*"
+                },
+                {
+                    "montype":1,
+                    "action_type":6,
+                    "res_path":"?:\\Users\\*\\AppData\\Local\\Microsoft\\Internet Explorer\\Recovery\\*"
+                }
+            ]
+        }
+    ]
+}
