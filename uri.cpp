@@ -51,15 +51,17 @@ std::string getFromCb() {
 	delete [] pCopied;
 	return data;
 }
-std::pair<bool, std::string> checkImageUri(const std::string& data) {
+std::tuple<bool, std::string, int> checkImageUri(const std::string& data) {
 	if(data.substr(0,11) != "data:image/")
-		return std::make_pair(false,"ERROR-not-a-image-data-url");
-	if(data.substr(14,8) != ";base64,")
-		return std::make_pair(false,"ERROR-not-base64");
-	return std::make_pair(true, data.substr(11,3));
+		return std::make_tuple(false,"ERROR-not-a-image-data-url", 0);
+	int index = 11;
+	while(data[index++] != ';'){}
+	if(data.substr(index, 7) != "base64,")
+		return std::make_tuple(false,"ERROR-not-base64", 0);
+	return std::make_tuple(true, data.substr(11, index-12), index+7);
 }
-inline std::string& truncImageUri(std::string& data) {
-	data.erase(0,22);
+inline std::string& truncImageUri(std::string& data, int pos) {
+	data.erase(0,pos);
 	return data;
 }
 void clearTheSame() {
@@ -133,12 +135,12 @@ void generateCom() {
 	auto afc = checkImageUri(data);
 	std::ofstream fout(savepath + tmpfilename);
 	int index = -1;
-	if(!afc.first) {
+	if(!std::get<0>(afc)) {
 		throw std::runtime_error("Invalid image-data-uri");
 	}
-	suffix = afc.second;
+	suffix = std::get<1>(afc);
 	index = getAvaIndex();
-	data = truncImageUri(data);
+	data = truncImageUri(data, std::get<2>(afc));
 	fout << data;
 	fout.close();
 	com[2] = com[2] + "\"" + savepath + prefix + std::to_string(index) + "." + suffix + "\" ";
@@ -156,7 +158,7 @@ void generateCom() {
 		//auto close after 1.2 seconds
 		std::thread th([]() {
 			if(!urilisten) { // it will automatically start ???
-				Sleep(1200);
+				Sleep(2000);
 				exit(0);
 			}
 
