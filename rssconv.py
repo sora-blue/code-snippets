@@ -18,17 +18,16 @@
 ```
 import re
 import random
-import sys
+import argparse
 
-if len(sys.argv) != 3:
-    print("Usage: python rssconv.py input_file output_file")
-    sys.exit(1)
+parser = argparse.ArgumentParser(description="Generate OPML from RSS URLs")
+parser.add_argument('--in', dest='input_path', required=True, help='input file path')
+parser.add_argument('--out', dest='output_path', required=True, help='output file path')
+parser.add_argument("-l", "--length", type=int, default=5, help="length of icon text")
+args = parser.parse_args()
 
-input_file = sys.argv[1]
-output_file = sys.argv[2]
-
-with open(input_file, "r", encoding="utf-8") as f_in, \
-        open(output_file, "w", encoding="utf-8") as f_out:
+with open(args.input_file, "r", encoding="utf-8") as f_in, \
+        open(args.output_file, "w", encoding="utf-8") as f_out:
     f_out.write('<?xml version="1.0" encoding="UTF-8"?><opml version="1.0"><head><title>rolly rss export</title></head><body>\n')
     for line in f_in:
         line = line.strip()
@@ -40,7 +39,7 @@ with open(input_file, "r", encoding="utf-8") as f_in, \
             title, url = match.group(1), match.group(2)
             title = title.strip()  # 添加这一行，去除标题前后的空白字符
             url = url.strip()  # 添加这一行，去除链接前后的空白字符
-            icon = title.split()[0][:5]  # 添加这一行，将 icon 设为标题的第一个单词的前五个字符
+            icon = title.split()[0][:args.length]  # 添加这一行，将 icon 设为标题的第一个单词的前 length 个字符
         else:
             continue
         color = "#" + "%06x" % random.randint(0, 0xFFFFFF)
