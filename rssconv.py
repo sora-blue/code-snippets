@@ -19,6 +19,7 @@
 import re
 import random
 import argparse
+import xml.sax.saxutils
 
 parser = argparse.ArgumentParser(description="Generate OPML from RSS URLs")
 parser.add_argument('--in', dest='input_path', required=True, help='input file path')
@@ -26,8 +27,8 @@ parser.add_argument('--out', dest='output_path', required=True, help='output fil
 parser.add_argument("-l", "--length", type=int, default=5, help="length of icon text")
 args = parser.parse_args()
 
-with open(args.input_file, "r", encoding="utf-8") as f_in, \
-        open(args.output_file, "w", encoding="utf-8") as f_out:
+with open(args.input_path, "r", encoding="utf-8") as f_in, \
+        open(args.output_path, "w", encoding="utf-8") as f_out:
     f_out.write('<?xml version="1.0" encoding="UTF-8"?><opml version="1.0"><head><title>rolly rss export</title></head><body>\n')
     for line in f_in:
         line = line.strip()
@@ -37,8 +38,8 @@ with open(args.input_file, "r", encoding="utf-8") as f_in, \
         match = re.match(r'(.+)\s+(https?://\S+)', line)
         if match:
             title, url = match.group(1), match.group(2)
-            title = title.strip()  # 添加这一行，去除标题前后的空白字符
-            url = url.strip()  # 添加这一行，去除链接前后的空白字符
+            title = xml.sax.saxutils.escape(title.strip())
+            url = xml.sax.saxutils.escape(url.strip())
             icon = title.split()[0][:args.length]  # 添加这一行，将 icon 设为标题的第一个单词的前 length 个字符
         else:
             continue
