@@ -31,7 +31,9 @@ python3 workflows/speech-to-text/mkv_whisper_workflow.py /mnt/d/path/video.mkv
 
 ## Cursor Skills
 
-项目内技能：`.cursor/skills/`（`mkv-whisper-transcribe`、`rss-to-opml`、`strip-vocals-from-video`、`unity-emote-psb-extract`）。
+项目内技能：`.cursor/skills/`（`mkv-whisper-transcribe`、`rss-to-opml`、`strip-vocals-from-video`、`unity-emote-psb-extract`、`workflow-skill-packaging`）。
+
+全局技能（任意项目可用）：`~/.cursor/skills/workflow-skill-packaging`（与仓库内同名 skill 同步）。
 
 ## legacy/
 
