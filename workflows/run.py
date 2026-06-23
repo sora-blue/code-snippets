@@ -29,6 +29,8 @@ WORKFLOWS = {
     "mkv-to-mp3": "speech-to-text/mkv_to_trimmed_mp3.py",
     "rss-to-opml": "rss-to-opml/rssconv.py",
     "strip-vocals": "media/strip_vocals.py",
+    "unity-emote-scan": "unity-emote/scan_containers.py",
+    "unity-emote-extract": "unity-emote/extract_pairs.py",
 }
 
 
@@ -75,6 +77,10 @@ def _to_runtime_args(workflow_args: list[str]) -> list[str]:
         "--mp3",
         "--in",
         "--out",
+        "--pairs",
+        "--psb-out",
+        "--freemote",
+        "--manifest",
     }
     converted: list[str] = []
     index = 0
@@ -109,8 +115,12 @@ def normalize_args(workflow: str, args: list[str]) -> list[str]:
         "speech-to-text": 1,
         "mkv-to-mp3": 1,
         "strip-vocals": 1,
+        "unity-emote-scan": 1,
+        "unity-emote-extract": 1,
     }
     positional_remaining = positional_slots.get(workflow, 0)
+    if workflow == "unity-emote-extract" and "--link-only" in args:
+        positional_remaining = 0
 
     index = 0
     while index < len(args):
@@ -126,7 +136,19 @@ def normalize_args(workflow: str, args: list[str]) -> list[str]:
             index += 1
             continue
 
-        if token in {"-o", "--output", "--output-root", "--mp3", "--in", "--out"} and index + 1 < len(args):
+        path_option_flags = {
+            "-o",
+            "--output",
+            "--output-root",
+            "--mp3",
+            "--in",
+            "--out",
+            "--pairs",
+            "--psb-out",
+            "--freemote",
+            "--manifest",
+        }
+        if token in path_option_flags and index + 1 < len(args):
             normalized.extend([token, str(resolve_input_path(args[index + 1]))])
             index += 2
             continue
@@ -139,6 +161,10 @@ def normalize_args(workflow: str, args: list[str]) -> list[str]:
                 "--mp3",
                 "--in",
                 "--out",
+                "--pairs",
+                "--psb-out",
+                "--freemote",
+                "--manifest",
             }:
                 normalized.append(f"{key}={resolve_input_path(value)}")
             else:

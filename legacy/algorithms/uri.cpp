@@ -14,7 +14,7 @@ in windows system.
 #include <windows.h>
 HGLOBAL hGlobal;
 PCHAR pCopied, pGlobal;
-std::string savepath = "D:\\EnglishRoot\\image-collect\\";
+std::string savepath = ".\\images\\";
 std::string prefix = "image";
 std::string suffix;
 bool clear = false;
